@@ -1,0 +1,12 @@
+name: visual-presentation-generator
+short_description: "Topic to an editable HTML slide deck, rendered locally."
+description: >-
+  Generates a complete, browser-renderable HTML slide deck from a one-line topic.
+  Cloud (LoomLoom) produces a full material pack (HTML source, content schema,
+  design config, QA report); the local shell renders the HTML source into a real
+  page, enforces two human checkpoints (edit script / choose style), validates
+  every artifact, and delivers. Use when a user wants a topic turned into a
+  styled, self-contained HTML presentation / slide deck.
+default_prompt: "$visual-presentation-generator: user wants to build an HTML presentation."
+version: "1.0.0"
+license: "MIT"

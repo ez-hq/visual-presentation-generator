@@ -1,0 +1,25 @@
+STYLE: are-na — Are.na (Honest Web)
+Palette: - Ground: `#FFFFFF`
+- Ink: `#000000`
+- Are.na blue link: `#0000EE` (the classic browser-default blue, used unironically)
+- Visited link: `#551A8B` (also classic browser-default)
+- Hairline: `#CCCCCC`
+- Optional: warm cream surface `#F4F1E8` for cards
+Typography: - Display & body: system serif (Times / Georgia) and / or system sans (the OS's default sans) on purpose
+- No custom font loading — the recipe leans on letting the browser pick
+- Body at 14–16px, line-height ~1.45
+- Italic and underlined links (also browser-default)
+Spacing: : 4 / 8 / 16 / 24 / 32. Tight. Content-dense.
+Radius: : 0
+Shadow: : none
+Motion: : none, or instant
+Signature: - Underlined blue links, visited purple — left as browser default
+- Headings are just larger versions of body type, no special font
+- Tables, lists, and prose all flow without ornament
+- Footers are tiny, plain, link-rich (the early-web "all links" footer)
+- Cards (if used) are flat rectangles with a 1px gray border and no shadow
+Avoid: - Custom fonts of any kind
+- Color other than the blue / purple link colors and the ink + ground
+- Hover animations, transitions of any kind
+- Modals, tooltips, micro-interactions
+- Any sense of "polish"

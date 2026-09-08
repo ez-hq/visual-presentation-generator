@@ -1,0 +1,15 @@
+# build output zips; source of truth is -en/ and -zh/ dirs + build.sh
+dist/*.zip
+
+# OS / tooling
+.DS_Store
+Thumbs.db
+__pycache__/
+.venv/
+node_modules/
+
+# secrets / user data / temp
+.env
+*/.token*
+*.local
+*.tmp

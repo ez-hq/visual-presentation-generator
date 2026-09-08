@@ -1,0 +1,22 @@
+STYLE: balenciaga-post-2017 — Balenciaga (post-Demna era)
+Palette: - Ink: `#000000`
+- Ground: `#FFFFFF`
+- One muted off-white surface: `#F5F4F0`
+- No color. None. If a color appears it's in a single photograph and never as a UI element.
+Typography: - Display & body: Helvetica or Arial — all weights, all sizes, *only this one family*
+- Headlines often set in all-caps at hero scale (140px+)
+- Body type small — 11–13px
+- Mixing weight is fine; mixing family is not
+Spacing: : 8 / 16 / 24 / 40 — restrained, but not luxurious-spacious; more "we didn't bother to soften it"
+Radius: : 0
+Shadow: : none
+Motion: : none — pages don't animate. Hover at most changes underline.
+Signature: - All-caps Helvetica headlines at extreme scale, tightly tracked, often left-aligned hard against the page edge
+- Product photography is editorial / fashion-style — model + product, harsh lighting, awkward poses; never the smiling-stock-model pattern
+- Navigation is plain text links, sometimes just a vertical list at the top of the page
+- Captions and metadata stripped to minimum (model name, designer, location)
+- No buttons styled as buttons — CTAs are underlined text links
+Avoid: - Any font other than Helvetica / Arial
+- Color
+- Polished UI affordances (rounded buttons, drop shadows, hover effects)
+- Decorative anything

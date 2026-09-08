@@ -1,0 +1,26 @@
+# STYLE MANUAL (25) — apply chosen style's tokens when generating.
+- active-theory: c=- | f: - Display: a strong grotesque or a custom display face built for the cam | not: - Many small WebGL moments (one big set-piece is t
+- aesop: c=#E8E4D9,#F2EFE5,#1B1B1B | f: - Display & body: a single transitional serif at every size — Suisse Wor | not: - Bold weights anywhere — Aesop is all regular and
+- apple-hig: c=#FFFFFF,#000000,#1D1D1F | f: - Display: SF Pro Display (weight 600 for headlines, 400 for sub-display | not: - Any gradient mesh, glow, or "tech atmosphere" — 
+- are-na: c=#FFFFFF,#000000,#0000EE | f: - Display & body: system serif (Times / Georgia) and / or system sans (t | not: - Custom fonts of any kind - Color other than the 
+- balenciaga-post-2017: c=#000000,#FFFFFF,#ace | f: - Display & body: Helvetica or Arial — all weights, all sizes, *only thi | not: - Any font other than Helvetica / Arial - Color - 
+- bloomberg-businessweek-turley: c=#FF3D00,#FFE800,#001AFF | f: - Display: a single bold grotesque used at absurd scale — Founders Grote | not: - Tasteful design (the recipe is anti-tasteful on 
+- bloomberg-terminal: c=#0A0E1A,#ace,#11172A | f: - Display & body: a monospaced workhorse — IBM Plex Mono, JetBrains Mono | not: - Any rounded corners - Hero sections / marketing-
+- dieter-rams-braun: c=#E4E1DC,#F5F4F0,#191919 | f: - Display & body: a precision grotesk — Akzidenz-Grotesk, Helvetica Now, | not: - Photography that romanticizes the product — Brau
+- field-io: c=#0B0B0F,#000000,#0CE0E5 | f: - Display: a variable font that *animates* on its own axes — Söhne Varia | not: - Static recipes (this isn't a static recipe — a s
+- headspace-meditation: c=#FFE2C5,#FFEDD5,#ace | f: - Display: a rounded friendly sans — Apercu, GT America (rounded variant | not: - Cool palettes — Headspace lives in warm tones, e
+- linear: c=#08090A,#ace,#16171C | f: - Display: Inter Tight at weight 600 (or Söhne, or Geist Sans) — never p | not: - Emoji - Bouncy springs or elastic easings - More
+- mailchimp-freddie: c=#FFE01B,#FFFFFF,#241C15 | f: - Display: a friendly grotesque — Helvetica Now Display, Söhne, Inter Ti | not: - Pure black anywhere (the recipe is warm-near-bla
+- mid-century-modern: c=#EBE3D2,#D9A441,#3D6E70 | f: - Display: a geometric grotesque (Futura, Avenir, ITC Avant Garde) at la | not: - Gradients — mid-century is flat color - Photogra
+- monocle-magazine: c=#F2EFE7,#1A1A1A,#C7322E | f: - Display: a refined slab or transitional serif — Plantin, Mercury, or T | not: - Sans-serif headlines — Monocle's signature is th
+- muji-kenya-hara: c=#F4F2EC,#FFFFFF,#2A2A28 | f: - Display: a humanist sans like Söhne, Inter Tight, or Klim's Calibre —  | not: - Any saturated color other than the MUJI red as a
+- notion-pre-ai: c=#FFFFFF,#ace,#F7F6F3 | f: - Display: a friendly modern serif — GT Sectra, Sentinel, or Source Seri | not: - Too many emoji in close proximity (one per secti
+- nyt-the-daily: c=#FFFFFF,#121212,#666666 | f: - Display: Cheltenham (NYT's proprietary) — substitute Sentinel or Tiemp | not: - Sans-serif headlines (the recipe's signature is 
+- pentagram: c=#000000,#FFFFFF,#1E3FFF | f: - Display: a single grotesque used at massive scale — Helvetica Now (wei | not: - Photography as the visual lead (type leads, not 
+- raycast: c=#0F0F11,#ace,#255 | f: - Display: Söhne weight 600, or Inter Tight weight 600 - Body: Inter at  | not: - Too many bright extension colors on the same scr
+- resn-storytelling: c=#ece | f: - A campaign-specific display face is almost always present — custom or  | not: - Bloating with too many beats — Resn's recipe is 
+- stripe-press: c=#F1ECDE,#ace,#E6DCC4 | f: - Display: a refined transitional or modern serif — GT Sectra, Domaine D | not: - Pure white grounds (the warm cream is part of th
+- tufte-dataink: c=#FBFAF6,#1B1B1A,#A6300E | f: - Display & body: an old-style or transitional serif — ET Book (Tufte's  | not: - Pie charts (Tufte would not approve) - 3D anythi
+- vercel-mesh: c=#000000,#ace,#0A0A0A | f: - Display: Geist Sans (weight 500–600) — Vercel's own family. Substitute | not: - Bright saturated purple → pink gradients (that's
+- vignelli-swiss-helvetica: c=#000000,#FFFFFF,#E2231A | f: - Display & body: Helvetica or Helvetica Now exclusively. Weights: 400 / | not: - Serifs entirely - Color combinations other than 
+- y2k-retrofuturism: c=#A3D5FF,#E0E4EA,#5FC9F8 | f: - Display: a chunky rounded sans with personality — Frutiger, Eurostile, | not: - Sharp corners - Muted / earthy palettes — Y2K is

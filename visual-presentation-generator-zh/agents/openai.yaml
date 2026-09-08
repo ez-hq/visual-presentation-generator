@@ -1,0 +1,10 @@
+name: visual-presentation-generator
+short_description: "把一句话主题生成一套可浏览、可编辑的HTML演示文稿"
+description: >-
+  把一句话主题生成一套完整、可在浏览器打开的 HTML 演示文稿。云端负责生成整套
+  材料包（HTML 源码、内容大纲、设计配置、质检报告），本地负责把源码渲染成真实网页、
+  执行两处人工确认（改稿 / 定风格）、校验每份产物并交付。当用户想让主题或简报
+  变成一份排好版的 HTML 演示文稿 / 幻灯片时使用。
+default_prompt: "$visual-presentation-generator：用户想要把主题转成一份HTML演示文稿。"
+version: "1.0.0"
+license: "MIT"
