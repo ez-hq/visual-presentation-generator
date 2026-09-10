@@ -50,11 +50,15 @@ description: >-
    确认执行吗（是 / 否）
    ```
    未获得明确确认前不运行；请用户回复“确认”。
-5. **选择风格模板（跑云端前必问）** —— 在提交云端任务之前，**必须先向用户询问用哪个视觉模板/风格**：
+5. **选择风格模板（跑云端前必问 + 必须解析为合法键）** —— 在提交云端任务之前，**必须先向用户确认风格，并用 `scripts/resolve_style.py` 解析成云端能认的 key**：
    - 展示当前可用风格：默认 `modern`，以及 25 个命名风格键（如 `linear`、`aesop`、`apple-hig`、`muji-kenya-hara`、`stripe-press`、`vercel-mesh`…，完整见 `references/style-catalog.json`）。
-   - 明确问：**「这份演示文稿要用哪个风格模板 / 视觉风格？」** 给 2–4 个贴合主题的建议选项 + “其它（自由输入风格键或描述）”。
-   - **未获得用户明确选择前不运行云端。**
-   - 用户选好后，把该风格键写入 `style` 列（默认 `linear`）。
+   - 收集用户想要的风格（用户可说键名或描述，如 `editorial`、`专业杂志感`）。
+   - **跑 `python3 scripts/resolve_style.py --style "<用户给的风格>" --json`**（花钱前，纯本地）：
+     - `action = use`（exit 0）：精确命中，把该 `key` 写入 `style` 列；
+     - `action = map`（exit 1）：不在 25 键内、已就近映射（例如 `editorial → monocle-magazine`）。**必须把映射结果告诉用户并请其确认**，确认后把映射的 `key` 写入 `style` 列，**绝不把原始不可识别词直接传云端**；
+     - `action = fail`（exit 2）：无法映射，**列候选让用户重选，禁止进入云端**。
+   - 一旦确认，把最终 `key` 写入 workbook 的 `style` 列（不填则默认 `linear`）。
+   - **未获得用户明确选择 + 解析确认前不运行云端。**
 6. **云端跑一次** —— 通过 Loom 模板 `template-spec run/submit-workbook`，模板与版本见 `references/contracts.md`。1 行 = 1 份演示文稿。
 7. **本地渲染 + 校验（不花钱）** —— 取回 compile 产物（HTML 源码），剥离代码围栏写成真实 `.html`，打开预览；执行
    `scripts/validate_presentation.py --run-id <云端runId> --source "<原始素材>" --html ... --schema ... --design ... --qa ...`。
@@ -66,6 +70,11 @@ description: >-
    - **Checkpoint 2 定风格**：若风格仍可再调，展示备选风格方向；用户选定 → 按新设置重新生成。
 8. **交付 + 摘要**：给 `presentation.html`（可打开）、`design_config`、`content_schema`、`qa_report`；
    摘要：在哪里、耗时、成本（多次调用就报累计）。不暴露 token/内部 ID/命令。
+
+8b. **风格不符 → 本地重排，别再重跑云端（省钱关键）**：
+   - 已知云端对 `style` 的支持不可靠（`stp_compile` 不消费 style，`stp_design` 仅提示；实测传 `editorial` 或 `monocle-magazine` 都可能回落 Linear 深色）。**任何风格不符都不必作为「内容重跑」来处理。**
+   - 若只是视觉不符：用 `scripts/restyle.py --html <已生成的.html> --style <合法键>` 在本地免费换视觉层（改 CSS 变量/配色/强调色），**正文 DOM 逐字不动**。
+   - 内容有问题才重跑云端；风格问题一律本地重排。绝不为了调风格而把已经达标的云内容重跑一遍（既烧钱又可能把内容生成坏）。
 
 ## 交付前的质量门（强制）
 - 每份产物在交付前都由 `scripts/validate_presentation.py` 校验，所有项 **通过才交付**。

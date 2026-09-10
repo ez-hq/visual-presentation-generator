@@ -69,16 +69,23 @@ design config, and QA report. One topic = one deck.
    Confirm and execute? (yes / no)
    ```
    Do not run without an explicit "yes".
-5. **Choose the style template (ask before running the cloud)** — before submitting
-   any cloud run, you MUST ask the user which visual template / style they want:
+5. **Choose the style template (ask before running the cloud + normalize it to a legal key)** — before submitting
+   any cloud run, you MUST ask the user which visual template / style they want, then run it through
+   `scripts/resolve_style.py`:
    - List the available styles: default `modern`, plus the 25 named style keys (e.g.
      `linear`, `aesop`, `apple-hig`, `muji-kenya-hara`, `stripe-press`, `vercel-mesh`,
      full list in `references/style-catalog.json`).
    - Ask explicitly: **"Which style template / visual style should this deck use?"**
      Offer 2–4 recommendations that fit the topic plus "Other (type a style key or
      description)".
-   - **Do not run the cloud before the user explicitly chooses.**
-   - Once chosen, put that key in the `style` column (default `linear`).
+   - **Run `python3 scripts/resolve_style.py --style "<user style>" --json` (local, free)**:
+     - `action = use` (exit 0): exact legal key — write that `key` into the `style` column.
+     - `action = map` (exit 1): not a legal key; mapped to a close one (e.g. `editorial ->
+       monocle-magazine`). **You MUST tell the user the mapping and get their confirmation,
+       then write the mapped `key` to the `style` column.** Never forward the raw unknown word to the cloud.
+     - `action = fail` (exit 2): cannot map — list candidates and let the user re-pick; do NOT enter the cloud.
+   - **Do not run the cloud before the user explicitly chooses AND the resolved key is confirmed.**
+   - Default `style` column value if left empty: `linear`.
 6. **Run once in the cloud** - via LoomLoom `template-spec run / submit-workbook`;
    template and version are in `references/contracts.md`. One row = one deck.
 7. **Render locally + validate (free)** — take the compile artifact (HTML source),
@@ -101,6 +108,17 @@ design config, and QA report. One topic = one deck.
 8. **Deliver + summary**: give `presentation.html` (openable), `design_config`,
    `content_schema`, `qa_report`; summarize where, how long, cost. Expose no tokens
    or internal IDs.
+
+8b. **Style mismatch -> re-style locally; never re-run the cloud for style (money saver)**:
+   - Known: the cloud's honor of `style` is unreliable (`stp_compile` ignores style;
+     `stp_design` only hints; passing `editorial` or `monocle-magazine` may still fall
+     back to Linear dark #08090A). Treat any style mismatch as NOT a content re-run.
+   - If only the look is off: `scripts/restyle.py --html <generated.html> --style <legal key>`
+     to swap the visual layer locally for free (CSS vars / palette / accent); the body
+     DOM is byte-for-byte unchanged.
+   - Re-run the cloud ONLY for content problems; for style issues always restyle locally.
+     Never re-run an already-good cloud deck just to change its style (it burns money and
+     may regenerate broken content, as seen in run2).
 
 ## Quality gate (before deliver)
 - Every artifact must pass `scripts/validate_presentation.py`; deliver **only after
