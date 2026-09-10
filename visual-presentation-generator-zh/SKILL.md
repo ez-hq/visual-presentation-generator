@@ -56,9 +56,13 @@ description: >-
    - **未获得用户明确选择前不运行云端。**
    - 用户选好后，把该风格键写入 `style` 列（默认 `linear`）。
 6. **云端跑一次** —— 通过 Loom 模板 `template-spec run/submit-workbook`，模板与版本见 `references/contracts.md`。1 行 = 1 份演示文稿。
-7. **本地渲染 + 校验（不花钱）** —— 取回 compile 产物（HTML 源码），剥离代码围栏写成真实 `.html`，打开预览；执行 `scripts/validate_presentation.py`（结构/完整/主题/可用性）。
-   - 若校验不通过 → 报告失败点，回本地改造/重跑，**绝不交付占位稿**。
-   - **Checkpoint 1 改稿**：展示大纲与文案，请用户确认或修改；若修改，用修改后输入重新走。
+7. **本地渲染 + 校验（不花钱）** —— 取回 compile 产物（HTML 源码），剥离代码围栏写成真实 `.html`，打开预览；执行
+   `scripts/validate_presentation.py --run-id <云端runId> --source "<原始素材>" --html ... --schema ... --design ... --qa ...`。
+   - **`--run-id` 必填**（必须是云端返回的合法 uuid）：校验脚本在**没有云端运行ID 时会硬失败**——这是交付溯源门禁，确保交付物确实来自云端完整链路，而不是本地伪造。
+   - **`--source` 传原始素材**：校验脚本会做**单位忠实**检查——若素材写「3.2亿元」而 HTML 却出现 `million/billion`，判 FAIL 并拒绝交付（堵住单位换算式幻觉）。
+   - **QA 严格判罚**：只有当 QA 报告明确写 `FULL_PASS=PASS` 才算过；QA 写 `FAIL` 一律拒绝交付。
+   - 若有任一硬门不过 → 报告失败点，回本地改造/重跑，**绝不交付占位稿**。
+   - **Checkpoint 1 改稿**：展示大纲与文案，请用户确认或修改；若修改，用修改后输入重新走（含重新 preflight 与重跑云端）。
    - **Checkpoint 2 定风格**：若风格仍可再调，展示备选风格方向；用户选定 → 按新设置重新生成。
 8. **交付 + 摘要**：给 `presentation.html`（可打开）、`design_config`、`content_schema`、`qa_report`；
    摘要：在哪里、耗时、成本（多次调用就报累计）。不暴露 token/内部 ID/命令。

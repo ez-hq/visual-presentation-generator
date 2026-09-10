@@ -29,11 +29,13 @@ NUMBER_HINT = re.compile(r"\b\d[\d.,]*(?:%|million|m\b|billion|b\b|k\b|users?|fo
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--run-id", default="", help="cloud run id (REQUIRED; provenance). Non-empty + syntactic uuid else HARD FAIL.")
     ap.add_argument("--html", help="真实（已剥离代码围栏）的 presentation.html 路径")
     ap.add_argument("--schema", help="content_schema 文本路径")
     ap.add_argument("--design", help="design_config 文本路径")
     ap.add_argument("--qa", help="qa_report 文本路径")
     ap.add_argument("--topic", required=True, help="原始用户主题（用于相关性检查）")
+    ap.add_argument("--source", default="", help="原始素材/引用文本（用于单位忠实与数字溯源）")
     ap.add_argument("--expected-slides", type=int, default=0, help="预期页数（0=不限）")
     ap.add_argument("--json", action="store_true", help="输出 JSON 报告并写入 validation-report.json")
     args = ap.parse_args()
@@ -109,15 +111,51 @@ def main():
         res["topic_relevant"] = bool(hit)
         if not hit:
             res["errors"].append("主题关键词未在演示文稿中出现（相关性）")
-    # ---- QA verdict ----
+    # ---- provenance: MUST come from a real cloud run (hard gate) ----
+    run_id = (args.run_id or "").strip()
+    is_uuid = bool(re.fullmatch(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}", run_id))
+    if not run_id:
+        res["errors"].append("缺失 --run-id：交付必须附云端运行ID（本地无生成能力，不得无ID交付）")
+    elif not is_uuid:
+        res["errors"].append("--run-id 不是合法 uuid：无法证明来自云端")
+    res["has_cloud_provenance"] = bool(run_id and is_uuid)
+
+    # ---- QA verdict: STRICT ----
+    qa_clean_fail = False
     if args.qa and Path(args.qa).is_file():
-        q = Path(args.qa).read_text(encoding="utf-8").lower()
-        res["qa_verdict"] = ("full_pass=" in q and "pass" in q) or ("full_pass=pass" in q)
-        # fallback: any PASS phrasing
-        res["qa_verdict"] = res["qa_verdict"] or ("pass" in q and "fail" not in q)
+        qa_raw = Path(args.qa).read_text(encoding="utf-8")
+        qa_low = qa_raw.lower()
+        qa_ok = "full_pass=pass" in qa_low
+        qa_fail = "full_pass=fail" in qa_low
+        res["qa_verdict"] = qa_ok and not qa_fail
+        qa_clean_fail = qa_fail and not qa_ok
+        if qa_clean_fail:
+            res["errors"].append("云端 QA = FAIL（含编造/单位失真），本地拒绝交付")
+    else:
+        res["qa_verdict"] = False
+        res["errors"].append("缺乏 QA 报告")
+
+    # ---- unit fidelity (anti unit-drift hallucination) ----
+    if html and qa_clean_fail is False and args.source:
+        src = args.source
+        unit_rules = [
+            ("亿元", ["million", "billion", "trillion"]),
+            ("万元", ["million", "billion"]),
+        ]
+        drift = []
+        for cn, en_units in unit_rules:
+            if cn in src:
+                for en in en_units:
+                    if re.search(r"\d[\d,]*\.?\d*\s*" + en, html, re.I):
+                        drift.append(f"素材单位'{cn}'，HTML却用'{en}'（单位漂移）")
+                        break
+        if drift:
+            res["errors"].append("检测到单位失真：将素材中式单位错误换算成西式单位（如 3.2亿元→¥320 million）")
+            res["warnings"].extend(drift)
 
     res["all_pass"] = (
-        res["html_wellformed"]
+        res["has_cloud_provenance"]
+        and res["html_wellformed"]
         and res["artifacts_complete"]
         and res["slides_present"]
         and res["topic_relevant"]

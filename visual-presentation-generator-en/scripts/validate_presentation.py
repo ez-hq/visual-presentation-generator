@@ -29,11 +29,13 @@ NUMBER_HINT = re.compile(r"\b\d[\d.,]*(?:%|million|m\b|billion|b\b|k\b|users?|fo
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--run-id", default="", help="cloud run id (REQUIRED; provenance). Non-empty uuid else HARD FAIL.")
     ap.add_argument("--html", help="path to the real (unwrapped) presentation.html")
     ap.add_argument("--schema", help="path to content_schema text")
     ap.add_argument("--design", help="path to design_config text")
     ap.add_argument("--qa", help="path to qa_report text")
     ap.add_argument("--topic", required=True, help="the original user topic (relevance)")
+    ap.add_argument("--source", default="", help="original reference material (unit fidelity / numeric tracing)")
     ap.add_argument("--expected-slides", type=int, default=0, help="expected slide count (0=any)")
     ap.add_argument("--json", action="store_true", help="emit JSON report and write validation-report.json")
     args = ap.parse_args()
@@ -112,12 +114,47 @@ def main():
     # ---- QA verdict ----
     if args.qa and Path(args.qa).is_file():
         q = Path(args.qa).read_text(encoding="utf-8").lower()
-        res["qa_verdict"] = ("full_pass=" in q and "pass" in q) or ("full_pass=pass" in q)
-        # fallback: any PASS phrasing
-        res["qa_verdict"] = res["qa_verdict"] or ("pass" in q and "fail" not in q)
+        # ---- provenance: MUST come from a real cloud run (hard gate) ----
+    run_id = (args.run_id or "").strip()
+    is_uuid = bool(re.fullmatch(r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}", run_id))
+    if not run_id:
+        res["errors"].append("missing --run-id: delivery must attach a cloud run id (local has no generator; do not hand over without an id)")
+    elif not is_uuid:
+        res["errors"].append("--run-id is not a valid uuid: cannot prove cloud origin")
+    res["has_cloud_provenance"] = bool(run_id and is_uuid)
+
+    # ---- strict QA verdict ----
+    qa_clean_fail = False
+    if args.qa and Path(args.qa).is_file():
+        qa_low = Path(args.qa).read_text(encoding="utf-8").lower()
+        qa_ok = "full_pass=pass" in qa_low
+        qa_fail = "full_pass=fail" in qa_low
+        res["qa_verdict"] = qa_ok and not qa_fail
+        qa_clean_fail = qa_fail and not qa_ok
+        if qa_clean_fail:
+            res["errors"].append("cloud QA = FAIL (fabrication / unit drift): local refuses to deliver")
+    else:
+        res["qa_verdict"] = False
+        res["errors"].append("missing QA report")
+
+    # ---- unit fidelity (anti unit-drift hallucination) ----
+    if html and qa_clean_fail is False and args.source:
+        src = args.source
+        unit_rules = [("\u4ebf\u5143", ["million", "billion", "trillion"]), ("\u4e07\u5143", ["million", "billion"])]
+        drift = []
+        for cn, en_units in unit_rules:
+            if cn in src:
+                for en in en_units:
+                    if re.search(r"\d[\d,]*\.?\d*\s*" + en, html, re.I):
+                        drift.append(f"source unit '{cn}', HTML uses '{en}' (unit drift)")
+                        break
+        if drift:
+            res["errors"].append("unit drift detected: source CN unit rewritten to western unit (e.g. CN 3.2 yi-yuan -> 320 million)")
+            res["warnings"].extend(drift)
 
     res["all_pass"] = (
-        res["html_wellformed"]
+        res["has_cloud_provenance"]
+        and res["html_wellformed"]
         and res["artifacts_complete"]
         and res["slides_present"]
         and res["topic_relevant"]

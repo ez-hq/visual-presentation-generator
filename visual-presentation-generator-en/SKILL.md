@@ -83,12 +83,19 @@ design config, and QA report. One topic = one deck.
    template and version are in `references/contracts.md`. One row = one deck.
 7. **Render locally + validate (free)** — take the compile artifact (HTML source),
    strip the code fence into a real `.html`, open the preview; run
-   `scripts/validate_presentation.py` (structure / completeness / relevance / anti-
-   hallucination).
-   - If validation fails → report what failed and what else is needed; fix and
+   `scripts/validate_presentation.py --run-id <cloudRunId> --source "<raw material>" --html ... --schema ... --design ... --qa ...`.
+   - **`--run-id` required** (must be a valid uuid returned by the cloud): the validator
+     hard-fails without a cloud run id — this provenance gate ensures the deck really
+     came through the full cloud chain, not fabricated locally.
+   - **`--source` passes the raw material**: the validator enforces **unit fidelity** —
+     if the source says "3.2Yi-yuan" but the HTML shows `million/billion`, it fails and
+     refuses delivery (blocks unit-drift hallucination).
+   - **Strict QA verdict**: PASS only when the QA report explicitly says
+     `FULL_PASS=PASS`; a QA `FAIL` always blocks delivery.
+   - If any hard gate fails → report what failed and what else is needed; fix and
      re-run; **never deliver a placeholder deck**.
    - **Checkpoint 1 (edit script)**: show the content + narration, let the user
-     confirm or edit. If edited, re-run with the changed input.
+     confirm or edit. If edited, re-run (re-preflight and re-run the cloud).
    - **Checkpoint 2 (choose style)**: if the style can still be tuned, show alternate
      style directions; user picks → regenerate with the new config.
 8. **Deliver + summary**: give `presentation.html` (openable), `design_config`,
